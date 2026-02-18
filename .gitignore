@@ -43,8 +43,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Generated files
-*.g.dart
+# Generated files (except Isar models which should be committed)
+# *.g.dart - Commented out to allow Isar generated files
 *.freezed.dart
 
 # Isar generated files
