@@ -42,8 +42,11 @@ class _TrainingConsoleScreenState extends ConsumerState<TrainingConsoleScreen> {
       );
     }
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) return;
+        
         // Confirm before leaving
         final shouldPop = await showDialog<bool>(
           context: context,
@@ -65,7 +68,10 @@ class _TrainingConsoleScreenState extends ConsumerState<TrainingConsoleScreen> {
             ],
           ),
         );
-        return shouldPop ?? false;
+        
+        if (shouldPop == true && context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
       child: Scaffold(
         appBar: AppBar(

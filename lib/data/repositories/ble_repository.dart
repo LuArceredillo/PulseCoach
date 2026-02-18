@@ -18,6 +18,10 @@ class BleRepository {
   bool _useMockData = false;
   Timer? _mockTimer;
   final Random _random = Random();
+  
+  // Mock data constants
+  static const int mockBpmMin = 60;
+  static const int mockBpmRange = 80; // Generates BPM between 60 and 140
 
   /// Stream of heart rate values
   Stream<int?> get heartRateStream => _heartRateController.stream;
@@ -167,8 +171,8 @@ class BleRepository {
   void _startMockData() {
     _mockTimer?.cancel();
     _mockTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // Generate random heart rate between 60 and 140
-      final mockBpm = 60 + _random.nextInt(81);
+      // Generate random heart rate between mockBpmMin and mockBpmMin + mockBpmRange
+      final mockBpm = mockBpmMin + _random.nextInt(mockBpmRange + 1);
       _heartRateController.add(mockBpm);
     });
   }
