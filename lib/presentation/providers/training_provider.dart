@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/database/app_database.dart';
 import '../../data/models/mission.dart';
 import '../../data/models/heart_rate_reading.dart';
 import '../../data/repositories/session_repository.dart';
@@ -255,9 +256,17 @@ final ttsServiceProvider = Provider<TtsService>((ref) {
   return service;
 });
 
+/// Provider for the Drift database
+final appDatabaseProvider = Provider<AppDatabase>((ref) {
+  final db = AppDatabase();
+  ref.onDispose(() => db.close());
+  return db;
+});
+
 /// Provider for session repository
 final sessionRepositoryProvider = Provider<SessionRepository>((ref) {
-  return SessionRepository();
+  final db = ref.watch(appDatabaseProvider);
+  return SessionRepository(db);
 });
 
 /// Provider for training state

@@ -8,7 +8,7 @@
 - **Monitoreo en Tiempo Real**: Visualización de frecuencia cardíaca con zonas cardíacas codificadas por color
 - **Entrenamientos CACO**: 3 misiones predefinidas de intervalos caminar-correr
 - **Coaching por Voz**: Instrucciones de voz en español mediante TTS
-- **Historial de Entrenamientos**: Almacenamiento local con Isar Database
+- **Historial de Entrenamientos**: Almacenamiento local con Drift (SQLite)
 - **Interfaz Dark Mode**: Diseño optimizado con tema oscuro y colores Polar
 
 ## 📱 Pantallas
@@ -50,9 +50,9 @@ cd PulseCoach
 flutter pub get
 ```
 
-3. **Generar código de Isar**
+3. **Generar código de Drift**
 ```bash
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 4. **Ejecutar la aplicación**
@@ -64,7 +64,7 @@ flutter run
 
 - **flutter_riverpod**: Gestión de estado
 - **flutter_blue_plus**: Conectividad Bluetooth Low Energy
-- **isar**: Base de datos local NoSQL
+- **drift**: Base de datos local SQLite (ORM type-safe)
 - **flutter_tts**: Text-to-Speech para coaching por voz
 - **flutter_animate**: Animaciones fluidas
 - **permission_handler**: Manejo de permisos
