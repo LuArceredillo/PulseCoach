@@ -1,22 +1,12 @@
-import 'package:isar/isar.dart';
-
-part 'heart_rate_reading.g.dart';
-
-/// Individual heart rate reading stored in Isar database
-@collection
+/// Individual heart rate reading plain data model
 class HeartRateReading {
-  Id id = Isar.autoIncrement;
+  final int id;
+  final DateTime timestamp;
+  final int bpm;
+  final int sessionId;
 
-  late DateTime timestamp;
-
-  late int bpm;
-
-  @Index()
-  late int sessionId;
-
-  /// Constructor
   HeartRateReading({
-    this.id = Isar.autoIncrement,
+    this.id = 0,
     DateTime? timestamp,
     required this.bpm,
     required this.sessionId,

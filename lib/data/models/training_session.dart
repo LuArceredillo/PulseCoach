@@ -1,40 +1,22 @@
-import 'package:isar/isar.dart';
-
-part 'training_session.g.dart';
-
-/// Training session stored in Isar database
-@collection
+/// Training session plain data model
 class TrainingSession {
-  Id id = Isar.autoIncrement;
+  final int id;
+  final DateTime startTime;
+  final DateTime? endTime;
+  final int missionId;
+  final int userAge;
+  final int? avgHeartRate;
+  final int? maxHeartRate;
+  final double? caloriesBurned;
+  final int timeInZoneRest;
+  final int timeInZoneWarmup;
+  final int timeInZoneFat;
+  final int timeInZoneCardio;
+  final int timeInZonePeak;
+  final bool completed;
 
-  @Index()
-  late DateTime startTime;
-
-  DateTime? endTime;
-
-  late int missionId;
-
-  late int userAge;
-
-  int? avgHeartRate;
-
-  int? maxHeartRate;
-
-  double? caloriesBurned;
-
-  // Time in each zone (seconds)
-  int timeInZoneRest = 0;
-  int timeInZoneWarmup = 0;
-  int timeInZoneFat = 0;
-  int timeInZoneCardio = 0;
-  int timeInZonePeak = 0;
-
-  @Index()
-  bool completed = false;
-
-  /// Constructor
   TrainingSession({
-    this.id = Isar.autoIncrement,
+    this.id = 0,
     DateTime? startTime,
     this.endTime,
     required this.missionId,
