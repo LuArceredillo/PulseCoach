@@ -8,10 +8,10 @@ class ZoneIndicator extends StatelessWidget {
   final int age;
 
   const ZoneIndicator({
-    Key? key,
+    super.key,
     required this.currentZone,
     required this.age,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class ZoneIndicator extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isActive ? zone.color.withOpacity(0.2) : AppColors.cardBackground,
+        color: isActive ? zone.color.withValues(alpha: 0.2) : AppColors.cardBackground,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isActive ? zone.color : Colors.transparent,
@@ -60,7 +60,7 @@ class ZoneIndicator extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              zone.name,
+              zone.displayName,
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,

@@ -66,8 +66,8 @@ class PredefinedMissions {
 
   static const Mission mission1 = Mission(
     id: 1,
-    title: 'Misión 1 - Iniciación CACO',
-    description: '4 ciclos de 3min caminar + 1min trotar',
+    title: 'Iniciación CACO',
+    description: 'Ideal para empezar. 4 ciclos de 3 min caminar + 1 min trotar suave.',
     phases: [
       MissionPhase(type: PhaseType.walk, durationSeconds: 180, targetZone: 'Calentamiento'),
       MissionPhase(type: PhaseType.run, durationSeconds: 60, targetZone: 'Quema Grasa'),
@@ -82,41 +82,39 @@ class PredefinedMissions {
 
   static const Mission mission2 = Mission(
     id: 2,
-    title: 'Misión 2 - Progresión',
-    description: '5 ciclos de 2min caminar + 2min trotar',
+    title: 'Quema Grasa Intenso',
+    description: 'Mantente en la zona ideal para quemar calorías. 20 min constantes.',
     phases: [
-      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio'),
+      MissionPhase(type: PhaseType.walk, durationSeconds: 300, targetZone: 'Calentamiento'),
+      MissionPhase(type: PhaseType.run, durationSeconds: 900, targetZone: 'Quema Grasa'),
     ],
   );
 
   static const Mission mission3 = Mission(
     id: 3,
-    title: 'Misión 3 - Desafío',
-    description: '6 ciclos de 1min caminar + 2min correr',
+    title: 'Intervalos HIIT',
+    description: 'Alta intensidad para mejorar tu potencia aeróbica.',
     phases: [
-      MissionPhase(type: PhaseType.walk, durationSeconds: 60, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio-Pico'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 60, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio-Pico'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 60, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio-Pico'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 60, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio-Pico'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 60, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio-Pico'),
-      MissionPhase(type: PhaseType.walk, durationSeconds: 60, targetZone: 'Calentamiento'),
-      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Cardio-Pico'),
+      MissionPhase(type: PhaseType.walk, durationSeconds: 300, targetZone: 'Calentamiento'),
+      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Pico'),
+      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
+      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Pico'),
+      MissionPhase(type: PhaseType.walk, durationSeconds: 120, targetZone: 'Calentamiento'),
+      MissionPhase(type: PhaseType.run, durationSeconds: 120, targetZone: 'Pico'),
+      MissionPhase(type: PhaseType.walk, durationSeconds: 300, targetZone: 'Enfriamiento'),
     ],
   );
 
-  static List<Mission> get allMissions => [mission1, mission2, mission3];
+  static const Mission mission4 = Mission(
+    id: 4,
+    title: 'Resistencia Pura',
+    description: 'Entrenamiento de larga duración en zona aeróbica.',
+    phases: [
+      MissionPhase(type: PhaseType.walk, durationSeconds: 600, targetZone: 'Calentamiento'),
+      MissionPhase(type: PhaseType.run, durationSeconds: 1800, targetZone: 'Cardio'),
+      MissionPhase(type: PhaseType.walk, durationSeconds: 600, targetZone: 'Enfriamiento'),
+    ],
+  );
+
+  static List<Mission> get allMissions => [mission1, mission2, mission3, mission4];
 }

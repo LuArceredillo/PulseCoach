@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/mission.dart';
-import '../../data/models/heart_rate_reading.dart';
+import '../../data/database/app_database.dart';
 import '../../data/repositories/session_repository.dart';
 import '../../domain/services/tts_service.dart';
 import '../../core/utils/heart_rate_zones.dart';
@@ -117,7 +117,7 @@ class TrainingStateNotifier extends StateNotifier<TrainingState> {
 
     // Subscribe to heart rate updates
     _hrSubscription?.cancel();
-    _hrSubscription = _ref.read(heartRateProvider.stream).listen((bpm) {
+    _hrSubscription = _ref.read(bluetoothServiceProvider).heartRateStream.listen((bpm) {
       if (bpm != null && state.isActive && !state.isPaused) {
         _updateHeartRate(bpm);
       }
@@ -150,14 +150,13 @@ class TrainingStateNotifier extends StateNotifier<TrainingState> {
     
     // Check if phase changed
     int phaseSeconds = 0;
-    int newPhaseIndex = state.currentPhaseIndex;
     
     for (int i = 0; i <= state.currentPhaseIndex; i++) {
       phaseSeconds += state.mission!.phases[i].durationSeconds;
     }
     
     if (newElapsed >= phaseSeconds) {
-      newPhaseIndex++;
+      int newPhaseIndex = state.currentPhaseIndex + 1;
       
       // Check if mission completed
       if (newPhaseIndex >= state.mission!.phases.length) {
@@ -185,8 +184,9 @@ class TrainingStateNotifier extends StateNotifier<TrainingState> {
   void _updateHeartRate(int bpm) {
     final zone = HeartRateZones.getZoneForBPM(bpm, AppConstants.defaultUserAge);
     
-    // Create reading (will be saved when session completes)
+    // Create reading using Drift data class
     final reading = HeartRateReading(
+      id: 0, // Placeholder
       bpm: bpm,
       sessionId: 0, // Will be updated when saving
       timestamp: DateTime.now(),
@@ -234,6 +234,9 @@ class TrainingStateNotifier extends StateNotifier<TrainingState> {
         endTime: DateTime.now(),
         readings: state.readings,
       );
+      
+      // Refresh history
+      _ref.invalidate(historyProvider);
     }
     
     state = state.copyWith(isActive: false);
@@ -243,7 +246,6 @@ class TrainingStateNotifier extends StateNotifier<TrainingState> {
   void dispose() {
     _timer?.cancel();
     _hrSubscription?.cancel();
-    _ttsService.dispose();
     super.dispose();
   }
 }
@@ -258,6 +260,12 @@ final ttsServiceProvider = Provider<TtsService>((ref) {
 /// Provider for session repository
 final sessionRepositoryProvider = Provider<SessionRepository>((ref) {
   return SessionRepository();
+});
+
+/// Provider for completed sessions
+final historyProvider = FutureProvider<List<TrainingSession>>((ref) async {
+  final repository = ref.watch(sessionRepositoryProvider);
+  return repository.getCompletedSessions();
 });
 
 /// Provider for training state

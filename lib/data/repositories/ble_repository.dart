@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rxdart/rxdart.dart';
@@ -59,8 +60,19 @@ class BleRepository {
 
     try {
       // Check if Bluetooth is available
-      if (await FlutterBluePlus.isAvailable == false) {
+      if (await FlutterBluePlus.isSupported == false) {
         throw Exception('Bluetooth no está disponible en este dispositivo');
+      }
+
+      // First check already connected devices
+      List<BluetoothDevice> connectedDevices = FlutterBluePlus.connectedDevices;
+      for (var device in connectedDevices) {
+        final name = device.advName.isNotEmpty ? device.advName : device.platformName;
+        if (name.contains(AppConstants.polarDevicePrefix)) {
+          debugPrint('Banda Polar ya conectada encontrada: $name. Usando esta...');
+          _connectToDevice(device);
+          return;
+        }
       }
 
       // Start scanning
@@ -72,7 +84,14 @@ class BleRepository {
       // Listen for scan results
       FlutterBluePlus.scanResults.listen((results) {
         for (ScanResult result in results) {
-          if (result.device.platformName.contains(AppConstants.polarDevicePrefix)) {
+          final deviceName = result.device.advName.isNotEmpty 
+              ? result.device.advName 
+              : result.device.platformName;
+          
+          debugPrint('Dispositivo encontrado: $deviceName (${result.device.remoteId})');
+          
+          if (deviceName.contains(AppConstants.polarDevicePrefix)) {
+            debugPrint('Banda Polar detectada! Conectando...');
             _connectToDevice(result.device);
             FlutterBluePlus.stopScan();
             break;
@@ -80,7 +99,7 @@ class BleRepository {
         }
       });
     } catch (e) {
-      print('Error al escanear dispositivos BLE: $e');
+      debugPrint('Error al escanear dispositivos BLE: $e');
       // Fall back to mock mode on error
       enableMockMode();
     }
@@ -89,38 +108,59 @@ class BleRepository {
   /// Connect to a specific device
   Future<void> _connectToDevice(BluetoothDevice device) async {
     try {
+      debugPrint('Intentando conectar a ${device.remoteId}...');
       await device.connect();
       _connectedDevice = device;
       _isConnectedController.add(true);
+      debugPrint('Conexión establecida');
 
       // Listen to device state
       _deviceStateSubscription = device.connectionState.listen((state) {
+        debugPrint('Estado de conexión cambiado: $state');
         _isConnectedController.add(state == BluetoothConnectionState.connected);
         if (state == BluetoothConnectionState.disconnected) {
           _handleDisconnection();
         }
       });
 
+      // Small delay after connection often helps with service discovery
+      await Future.delayed(const Duration(milliseconds: 500));
+
       // Discover services
+      debugPrint('Descubriendo servicios...');
       List<BluetoothService> services = await device.discoverServices();
+      debugPrint('Se encontraron ${services.length} servicios');
       
+      final hrServiceUuid = Guid(AppConstants.heartRateServiceUuid);
+      final hrCharUuid = Guid(AppConstants.heartRateMeasurementUuid);
+      final batteryServiceUuid = Guid(AppConstants.batteryServiceUuid);
+      final batteryCharUuid = Guid(AppConstants.batteryLevelUuid);
+
       // Subscribe to heart rate characteristic
       for (BluetoothService service in services) {
-        if (service.uuid.toString().toLowerCase() == AppConstants.heartRateServiceUuid) {
+        if (service.uuid == hrServiceUuid) {
+          debugPrint('Servicio de Frecuencia Cardíaca encontrado');
           for (BluetoothCharacteristic characteristic in service.characteristics) {
-            if (characteristic.uuid.toString().toLowerCase() == AppConstants.heartRateMeasurementUuid) {
+            if (characteristic.uuid == hrCharUuid) {
+              debugPrint('Característica de medición de FC encontrada. Suscribiendo...');
               await characteristic.setNotifyValue(true);
-              _hrCharacteristicSubscription = characteristic.lastValueStream.listen(_parseHeartRate);
+              _hrCharacteristicSubscription = characteristic.lastValueStream.listen((value) {
+                // debugPrint('Datos de FC recibidos: $value');
+                _parseHeartRate(value);
+              });
             }
           }
         }
         
         // Read battery level
-        if (service.uuid.toString().toLowerCase() == AppConstants.batteryServiceUuid) {
+        if (service.uuid == batteryServiceUuid) {
+          debugPrint('Servicio de Batería encontrado');
           for (BluetoothCharacteristic characteristic in service.characteristics) {
-            if (characteristic.uuid.toString().toLowerCase() == AppConstants.batteryLevelUuid) {
+            if (characteristic.uuid == batteryCharUuid) {
+              debugPrint('Característica de nivel de batería encontrada');
               final value = await characteristic.read();
               if (value.isNotEmpty) {
+                debugPrint('Nivel de batería: ${value[0]}%');
                 _batteryLevelController.add(value[0]);
               }
             }
@@ -128,14 +168,18 @@ class BleRepository {
         }
       }
     } catch (e) {
-      print('Error al conectar con el dispositivo: $e');
+      debugPrint('Error al conectar con el dispositivo: $e');
       _isConnectedController.add(false);
     }
   }
 
   /// Parse heart rate from BLE characteristic value
   void _parseHeartRate(List<int> value) {
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      debugPrint('Datos de FC vacíos recibidos');
+      return;
+    }
+    debugPrint('Parseando datos de FC: $value');
 
     // Parse according to Heart Rate Measurement characteristic format
     int flags = value[0];

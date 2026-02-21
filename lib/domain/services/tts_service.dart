@@ -1,4 +1,3 @@
-import 'package:flutter_tts/flutter_tts.dart';
 import '../../core/utils/audio_coach.dart';
 
 /// Service for Text-to-Speech coaching

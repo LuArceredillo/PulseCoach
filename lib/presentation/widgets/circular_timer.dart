@@ -11,11 +11,11 @@ class CircularTimer extends StatelessWidget {
   final PhaseType phaseType;
 
   const CircularTimer({
-    Key? key,
+    super.key,
     required this.remainingSeconds,
     required this.totalSeconds,
     required this.phaseType,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -10,16 +10,16 @@ class BpmDisplay extends StatelessWidget {
   final HRZone? zone;
 
   const BpmDisplay({
-    Key? key,
+    super.key,
     required this.bpm,
     this.zone,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final color = zone?.color ?? AppColors.textSecondary;
     final displayBpm = bpm ?? 0;
-    final zoneName = zone?.name ?? 'Sin señal';
+    final zoneName = zone?.displayName ?? 'Sin señal';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -54,7 +54,7 @@ class BpmDisplay extends StatelessWidget {
         ),
         
         // BPM label
-        Text(
+        const Text(
           'BPM',
           style: AppTextStyles.bpmLabel,
         ),
@@ -65,7 +65,7 @@ class BpmDisplay extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: color, width: 2),
           ),

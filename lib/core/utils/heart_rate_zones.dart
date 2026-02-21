@@ -11,7 +11,7 @@ enum HRZone {
   peak;
 
   /// Get zone name in Spanish
-  String get name {
+  String get displayName {
     switch (this) {
       case HRZone.rest:
         return 'Reposo';

@@ -9,10 +9,10 @@ class MissionCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const MissionCard({
-    Key? key,
+    super.key,
     required this.mission,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +33,15 @@ class MissionCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: AppColors.polarRed.withOpacity(0.2),
+                  color: AppColors.polarRed.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.directions_run,
+                child: Icon(
+                  mission.title.contains('HIIT') 
+                      ? Icons.bolt 
+                      : mission.title.contains('Quema Grasa') 
+                          ? Icons.local_fire_department 
+                          : Icons.directions_run,
                   color: AppColors.polarRed,
                   size: 32,
                 ),

@@ -14,9 +14,8 @@ class AppTheme {
         primary: AppColors.polarRed,
         secondary: AppColors.neonGreen,
         surface: AppColors.cardBackground,
-        background: AppColors.background,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.cardBackground,
         elevation: 4,
         shape: RoundedRectangleBorder(

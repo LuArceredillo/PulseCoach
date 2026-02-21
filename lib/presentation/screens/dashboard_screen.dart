@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../providers/ble_provider.dart';
-import '../providers/missions_provider.dart';
 import 'missions_screen.dart';
+import 'history_screen.dart';
 
 /// Dashboard home screen
 class DashboardScreen extends ConsumerStatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
@@ -20,7 +20,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     super.initState();
     // Auto-connect on startup (using mock data for now)
     Future.microtask(() {
-      ref.read(bluetoothServiceProvider).connectToDevice(useMockData: true);
+      ref.read(bluetoothServiceProvider).connectToDevice(useMockData: false);
     });
   }
 
@@ -42,8 +42,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: isConnected.value == true 
-                      ? AppColors.neonGreen.withOpacity(0.2)
-                      : AppColors.polarRed.withOpacity(0.2),
+                      ? AppColors.neonGreen.withValues(alpha: 0.2)
+                      : AppColors.polarRed.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isConnected.value == true 
@@ -95,6 +95,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             
             // Motivational quote
             _buildMotivationalCard(),
+            
+            const SizedBox(height: 24),
+
+            // Statistics/History section
+            _buildHistorySummaryCard(context),
             
             const SizedBox(height: 24),
             
@@ -159,14 +164,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ],
               ),
             ] else ...[
-              Text(
+              const Text(
                 'No hay dispositivo conectado',
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
               const SizedBox(height: 8),
               ElevatedButton.icon(
                 onPressed: () {
-                  ref.read(bluetoothServiceProvider).connectToDevice(useMockData: true);
+                  ref.read(bluetoothServiceProvider).connectToDevice(useMockData: false);
                 },
                 icon: const Icon(Icons.bluetooth_searching),
                 label: const Text('Buscar dispositivo'),
@@ -180,18 +185,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildMotivationalCard() {
     return Card(
-      color: AppColors.polarRed.withOpacity(0.1),
-      child: Padding(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      color: AppColors.polarRed.withValues(alpha: 0.1),
+      child: const Padding(
+        padding: EdgeInsets.all(AppConstants.defaultPadding),
         child: Column(
           children: [
-            const Icon(
+            Icon(
               Icons.emoji_events,
               color: AppColors.neonGreen,
               size: 48,
             ),
-            const SizedBox(height: 12),
-            const Text(
+            SizedBox(height: 12),
+            Text(
               '¡Hoy es un gran día para entrenar!',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -200,8 +205,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'Cada paso cuenta hacia tu objetivo',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -244,13 +249,58 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.play_arrow),
+                   Icon(Icons.directions_run),
                   SizedBox(width: 8),
-                  Text('Iniciar Misión CACO', style: TextStyle(fontSize: 18)),
+                  Text('Ver Planes de Entrenamiento', style: TextStyle(fontSize: 18)),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistorySummaryCard(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HistoryScreen()),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(AppConstants.defaultPadding),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.neonGreen.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.history, color: AppColors.neonGreen, size: 32),
+              ),
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Mi Historial',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    ),
+                    Text(
+                      'Revisa tus progresos y estadísticas',
+                      style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+            ],
+          ),
         ),
       ),
     );

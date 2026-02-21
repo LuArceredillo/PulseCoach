@@ -1,5 +1,5 @@
+import 'package:permission_handler/permission_handler.dart';
 import '../../data/repositories/ble_repository.dart';
-import '../../core/constants/app_constants.dart';
 
 /// Service for managing Bluetooth connectivity
 class BluetoothService {
@@ -30,8 +30,22 @@ class BluetoothService {
     if (useMockData) {
       _repository.enableMockMode();
     } else {
-      await _repository.startScan();
+      final hasPermission = await _requestPermissions();
+      if (hasPermission) {
+        await _repository.startScan();
+      }
     }
+  }
+
+  /// Request required Bluetooth permissions
+  Future<bool> _requestPermissions() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+      Permission.location,
+    ].request();
+
+    return statuses.values.every((status) => status.isGranted);
   }
 
   /// Disconnect from device

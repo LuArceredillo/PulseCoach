@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/constants/colors.dart';
 import '../providers/missions_provider.dart';
 import '../widgets/mission_card.dart';
 import 'training_console_screen.dart';
 
 /// Missions selector screen
 class MissionsScreen extends ConsumerWidget {
-  const MissionsScreen({Key? key}) : super(key: key);
+  const MissionsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -4,14 +4,13 @@ import '../../core/constants/colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../providers/missions_provider.dart';
 import '../providers/training_provider.dart';
-import '../widgets/bpm_display.dart';
-import '../widgets/circular_timer.dart';
+import '../widgets/training_hero_display.dart';
 import '../widgets/zone_indicator.dart';
 import '../../data/models/mission.dart';
 
 /// Training console screen - active workout
 class TrainingConsoleScreen extends ConsumerStatefulWidget {
-  const TrainingConsoleScreen({Key? key}) : super(key: key);
+  const TrainingConsoleScreen({super.key});
 
   @override
   ConsumerState<TrainingConsoleScreen> createState() => _TrainingConsoleScreenState();
@@ -44,7 +43,7 @@ class _TrainingConsoleScreenState extends ConsumerState<TrainingConsoleScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (bool didPop) async {
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) return;
         
         // Confirm before leaving
@@ -100,23 +99,13 @@ class _TrainingConsoleScreenState extends ConsumerState<TrainingConsoleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // BPM Display
-          Center(
-            child: BpmDisplay(
-              bpm: trainingState.currentBpm,
-              zone: trainingState.currentZone,
-            ),
-          ),
-          
-          const SizedBox(height: 32),
-          
-          // Circular Timer
-          Center(
-            child: CircularTimer(
-              remainingSeconds: trainingState.phaseRemainingSeconds,
-              totalSeconds: trainingState.currentPhase?.durationSeconds ?? 0,
-              phaseType: trainingState.currentPhase?.type ?? PhaseType.walk,
-            ),
+          // Hero Display (BPM + Phase Circular Progress)
+          TrainingHeroDisplay(
+            bpm: trainingState.currentBpm,
+            zone: trainingState.currentZone,
+            remainingSeconds: trainingState.phaseRemainingSeconds,
+            totalSeconds: trainingState.currentPhase?.durationSeconds ?? 0,
+            phaseType: trainingState.currentPhase?.type ?? PhaseType.walk,
           ),
           
           const SizedBox(height: 32),

@@ -24,7 +24,7 @@ class HRZoneEntity {
       zone: zone,
       minBpm: min,
       maxBpm: max,
-      name: zone.name,
+      name: zone.displayName,
       color: zone.color,
     );
   }

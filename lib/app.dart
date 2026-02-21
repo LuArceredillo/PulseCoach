@@ -4,7 +4,7 @@ import 'presentation/screens/dashboard_screen.dart';
 
 /// Main app widget
 class PulseCoachApp extends StatelessWidget {
-  const PulseCoachApp({Key? key}) : super(key: key);
+  const PulseCoachApp({super.key});
 
   @override
   Widget build(BuildContext context) {
